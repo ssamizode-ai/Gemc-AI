@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="tg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090b13">
+<title>GemC AI</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#090b13;
+  --panel:#111522;
+  --glass:rgba(255,255,255,.045);
+  --border:rgba(255,255,255,.09);
+  --text:#f3f5ff;
+  --muted:#939bb1;
+  --accent:#8b7cff;
+  --accent2:#43d9c5;
+}
+
+body{
+  font-family:system-ui,-apple-system,sans-serif;
+  background:
+    radial-gradient(ellipse at 15% 0%,rgba(104,78,255,.17),transparent 45%),
+    radial-gradient(ellipse at 90% 100%,rgba(31,196,180,.09),transparent 40%),
+    var(--bg);
+  color:var(--text);
+  height:100dvh;min-height:0;
+  overflow:hidden;min-height:0;
+}
+
+button,textarea{font:inherit}
+button{cursor:pointer}
+.app{display:flex;height:100dvh;min-height:0;width:100%}
+
+/* SIDEBAR */
+
+.sidebar{
+  width:265px;
+  flex-shrink:0;
+  background:rgba(12,15,25,.88);
+  border-right:1px solid var(--border);
+  padding:20px 14px;
+  display:flex;
+  flex-direction:column;
+  transition:transform .25s;
+  z-index:20;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:5px 7px 25px;
+}
+
+.logo{
+  width:42px;
+  height:42px;
+  border-radius:15px;
+  background:linear-gradient(135deg,#9c8cff,#6251ee 55%,#32d6c3);
+  display:grid;
+  place-items:center;
+  font-size:23px;
+  font-weight:800;
+  color:white;
+  box-shadow:0 5px 24px #7963ff45;
+}
+
+.brand-name{font-size:19px;font-weight:750;letter-spacing:-.5px}
+.brand-sub{font-size:11px;color:var(--muted);margin-top:2px}
+
+.new-chat{
+  border:1px solid #8877ff55;
+  background:linear-gradient(110deg,#8875ff20,#44d9c510);
+  color:white;
+  border-radius:13px;
+  padding:13px;
+  text-align:left;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:600;
+  margin-bottom:25px;
+}
+
+.new-chat:hover{background:#8875ff2c}
+
+.section-label{
+  color:#737d96;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:1.4px;
+  padding:0 10px 12px;
+}
+
+.history{
+  overflow-y:auto;
+  flex:1;
+}
+
+.history-item{
+  padding:11px 12px;
+  border-radius:10px;
+  color:#c5cadd;
+  font-size:13px;
+  white-space:nowrap;
+  overflow:hidden;min-height:0;
+  text-overflow:ellipsis;
+  cursor:pointer;
+  margin-bottom:3px;
+}
+
+.history-item:hover{background:var(--glass)}
+
+.sidebar-bottom{
+  border-top:1px solid var(--border);
+  padding-top:15px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.avatar{
+  width:36px;
+  height:36px;
+  border-radius:12px;
+  background:linear-gradient(135deg,#8877ff,#35cdbd);
+  display:grid;
+  place-items:center;
+  font-weight:800;
+}
+
+.user-info{font-size:13px;font-weight:600}
+.user-status{font-size:11px;color:var(--muted);margin-top:3px}
+
+/* MAIN */
+html,body{height:100%;overflow:hidden}
+.app{height:100dvh;height:100vh;height:100dvh;min-height:0;overflow:hidden}
+.main{flex:1;min-width:0;min-height:0;height:100%;display:flex;flex-direction:column;overflow:hidden}
+.chat{flex:1 1 0;min-height:0;height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.chat-inner{min-height:min-content;width:100%}
+.composer-area{flex-shrink:0;position:relative;z-index:5}
+
+
+.main{min-height:0;height:100%;}
+  flex:1;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  position:relative;
+}
+
+.topbar{
+  min-height:67px;
+  padding:0 24px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:1px solid var(--border);
+  background:#0b0e18a8;
+  backdrop-filter:blur(18px);
+}
+
+.top-left{display:flex;align-items:center;gap:12px}
+.top-title{font-weight:650;font-size:15px}
+.status{font-size:11px;color:var(--accent2);margin-top:3px}
+
+.menu-btn{
+  width:38px;height:38px;
+  border:1px solid var(--border);
+  border-radius:11px;
+  color:white;
+  background:var(--glass);
+  font-size:19px;
+}
+
+.top-badge{
+  font-size:11px;
+  color:#b9adff;
+  border:1px solid #8b7cff38;
+  background:#8b7cff12;
+  padding:7px 11px;
+  border-radius:20px;
+}
+
+/* CHAT AREA */
+
+.chat{
+  flex:1;
+  overflow-y:auto;
+  scroll-behavior:smooth;
+  padding:25px 20px;
+}
+
+.chat-inner{
+  max-width:790px;
+  width:100%;
+  margin:0 auto;
+  min-height:100%;
+  display:flex;
+  flex-direction:column;
+}
+
+.welcome{
+  margin:auto;
+  width:100%;
+  padding:30px 12px;
+  text-align:center;
+  animation:welcomeIn .5s ease both;
+}
+
+@keyframes welcomeIn{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.logo-orb{
+  width:82px;
+  height:82px;
+  margin:0 auto 25px;
+  border-radius:28px;
+  background:linear-gradient(145deg,#a495ff,#6552ed 58%,#37d8c5);
+  display:grid;
+  place-items:center;
+  font-size:42px;
+  color:white;
+  box-shadow:0 12px 45px #7964ff35;
+  position:relative;
+}
+
+.logo-orb:after{
+  content:"";
+  position:absolute;
+  inset:-7px;
+  border:1px solid #9282ff30;
+  border-radius:34px;
+}
+
+.welcome h1{
+  font-size:clamp(28px,5vw,39px);
+  line-height:1.25;
+  letter-spacing:-1.4px;
+  margin-bottom:13px;
+}
+
+.gradient-text{
+  background:linear-gradient(100deg,#a99aff,#6ce5d5);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+
+.welcome p{
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.8;
+  max-width:440px;
+  margin:0 auto;
+}
+
+.suggestions{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:11px;
+  max-width:570px;
+  width:100%;
+  margin:30px auto 0;
+}
+
+.suggestion{
+  text-align:left;
+  color:#e2e5f5;
+  background:rgba(255,255,255,.035);
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:15px;
+  transition:.2s;
+}
+
+.suggestion:hover{
+  border-color:#8b7cff88;
+  background:#8b7cff0c;
+  transform:translateY(-2px);
+}
+
+.suggestion-icon{font-size:19px;margin-bottom:9px}
+.suggestion-title{font-size:13px;font-weight:650;margin-bottom:5px}
+.suggestion-desc{font-size:11px;color:var(--muted);line-height:1.5}
+
+/* MESSAGES */
+
+.message{
+  display:flex;
+  gap:12px;
+  margin:0 0 27px;
+  animation:messageIn .22s ease;
+}
+
+@keyframes messageIn{
+  from{opacity:0;transform:translateY(6px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.message.user{flex-direction:row-reverse}
+
+.message-avatar{
+  flex-shrink:0;
+  width:34px;
+  height:34px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  font-size:15px;
+  font-weight:800;
+  background:linear-gradient(135deg,#8f7bff,#6050e5);
+}
+
+.message.user .message-avatar{
+  background:linear-gradient(135deg,#253047,#39445f);
+  font-size:12px;
+}
+
+.message-content{min-width:0;max-width:calc(100% - 46px)}
+
+.message-name{
+  font-size:12px;
+  color:#aaa5ff;
+  font-weight:650;
+  margin-bottom:8px;
+}
+
+.message.user .message-name{text-align:right;color:#b9c2d9}
+
+.bubble{
+  font-size:14px;
+  line-height:1.85;
+  overflow-wrap:anywhere;
+  color:#e0e4f1;
+}
+
+.message.user .bubble{
+  background:linear-gradient(135deg,#7465d829,#5e70a326);
+  border:1px solid #9485ff26;
+  padding:11px 15px;
+  border-radius:17px 5px 17px 17px;
+  white-space:pre-wrap;
+}
+
+.bubble p{margin:0 0 12px}
+.bubble p:last-child{margin-bottom:0}
+.bubble h1,.bubble h2,.bubble h3{
+  color:#f1efff;
+  margin:17px 0 9px;
+  line-height:1.4;
+}
+.bubble h1{font-size:22px}
+.bubble h2{font-size:19px}
+.bubble h3{font-size:16px}
+.bubble ul,.bubble ol{padding-left:23px;margin:8px 0 13px}
+.bubble li{padding:3px 0}
+.bubble strong{color:#fff;font-weight:750}
+.bubble code{
+  background:#8b7cff20;
+  border:1px solid #8b7cff20;
+  border-radius:5px;
+  padding:2px 5px;
+  font-size:.92em;
+  color:#c8beff;
+}
+.bubble pre{
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  background:#080b13;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:14px;
+  margin:12px 0;
+  color:#b9f1df;
+  overflow-x:auto;
+}
+.bubble pre code{border:0;background:none;padding:0;color:inherit}
+
+.typing{display:flex;gap:5px;padding:8px 0}
+.typing span{
+  width:7px;height:7px;border-radius:50%;
+  background:#9b8cff;
+  animation:dot 1s infinite ease-in-out;
+}
+.typing span:nth-child(2){animation-delay:.15s}
+.typing span:nth-child(3){animation-delay:.3s}
+@keyframes dot{0%,60%,100%{opacity:.35;transform:translateY(0)}30%{opacity:1;transform:translateY(-5px)}}
+
+/* INPUT */
+.main{height:100dvh;min-height:0;overflow:hidden}
+.chat{flex:1;min-height:0;overflow-y:auto}
+.chat-inner{width:100%;min-height:100%;}
+.composer-area{flex-shrink:0;position:relative;z-index:5;width:100%;padding:12px 20px 15px;background:#090b13;}
+.composer-wrap{width:100%;max-width:790px;margin:0 auto;}
+.composer{width:100%;display:flex;align-items:flex-end;}
+#prompt{display:block;min-height:42px;max-height:120px;flex:1;width:100%;color:#fff;background:transparent;}
+.send-btn{display:grid;flex-shrink:0;visibility:visible;opacity:1}
+@media(max-width:700px){.main{height:100dvh;height:100vh;height:100dvh}.composer-area{padding:10px 12px 14px;}.chat{padding:15px 12px;}}
+.main{height:100dvh;min-height:0;overflow:hidden}
+.chat{flex:1;min-height:0;overflow-y:auto}
+.chat-inner{width:100%;min-height:100%;}
+.composer-area{flex-shrink:0;position:relative;z-index:5;width:100%;padding:12px 20px 15px;background:#090b13;}
+.composer-wrap{width:100%;max-width:790px;margin:0 auto;}
+.composer{width:100%;display:flex;align-items:flex-end;}
+#prompt{display:block;min-height:42px;max-height:120px;flex:1;width:100%;color:#fff;background:transparent;}
+.send-btn{display:grid;flex-shrink:0;visibility:visible;opacity:1}
+@media(max-width:700px){.main{height:100dvh;height:100vh;height:100dvh}.composer-area{padding:10px 12px 14px;}.chat{padding:15px 12px;}}
+.main{height:100dvh;min-height:0;overflow:hidden}
+.chat{flex:1;min-height:0;overflow-y:auto}
+.chat-inner{width:100%;min-height:100%;}
+.composer-area{flex-shrink:0;position:relative;z-index:5;width:100%;padding:12px 20px 15px;background:#090b13;}
+.composer-wrap{width:100%;max-width:790px;margin:0 auto;}
+.composer{width:100%;display:flex;align-items:flex-end;}
+#prompt{display:block;min-height:42px;max-height:120px;flex:1;width:100%;color:#fff;background:transparent;}
+.send-btn{display:grid;flex-shrink:0;visibility:visible;opacity:1}
+@media(max-width:700px){.main{height:100dvh;height:100vh;height:100dvh}.composer-area{padding:10px 12px 14px;}.chat{padding:15px 12px;}}
+
+.composer-area{
+  padding:12px 20px 15px;
+  background:linear-gradient(0deg,var(--bg) 75%,transparent);
+}
+
+.composer-wrap{max-width:790px;margin:0 auto}
+
+.composer{
+  display:flex;
+  align-items:flex-end;
+  gap:10px;
+  padding:10px 11px 10px 17px;
+  border:1px solid #a296ff38;
+  border-radius:20px;
+  background:rgba(20,24,39,.88);
+  box-shadow:0 8px 35px #00000018,0 0 24px #8b7cff08;
+  backdrop-filter:blur(20px);
+  transition:border-color .2s;
+}
+
+.composer:focus-within{border-color:#9a8bff9c}
+
+#prompt{
+  flex:1;
+  min-width:0;
+  resize:none;
+  max-height:150px;
+  border:0;
+  outline:0;
+  background:transparent;
+  color:white;
+  font-size:14px;
+  line-height:1.65;
+  padding:7px 0;
+}
+
+#prompt::placeholder{color:#7f879e}
+
+.send-btn{
+  flex-shrink:0;
+  width:42px;height:42px;
+  border:0;
+  border-radius:13px;
+  color:white;
+  background:linear-gradient(135deg,#9a87ff,#6553e9);
+  font-size:20px;
+  display:grid;
+  place-items:center;
+  box-shadow:0 4px 15px #7863ff30;
+  transition:.2s;
+}
+
+.send-btn:hover{transform:translateY(-2px);filter:brightness(1.12)}
+.send-btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+.hint{
+  font-size:10px;
+  color:#69738b;
+  text-align:center;
+  padding-top:11px;
+}
+
+.overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#0009;
+  z-index:15;
+}
+
+/* MOBILE */
+
+@media(max-width:700px){
+  .sidebar{
+    position:fixed;
+    inset:0 auto 0 0;
+    height:100dvh;min-height:0;
+    transform:translateX(-105%);
+    box-shadow:15px 0 50px #0005;
+  }
+  .sidebar.open{transform:translateX(0)}
+  .overlay.show{display:block}
+  .topbar{padding:0 14px;min-height:60px}
+  .chat{padding:20px 14px}
+  .welcome{padding:20px 0}
+  .logo-orb{width:72px;height:72px;font-size:36px;border-radius:24px;margin-bottom:22px}
+  .welcome h1{font-size:30px}
+  .welcome p{font-size:13px}
+  .suggestions{gap:9px;margin-top:25px}
+  .suggestion{padding:12px;border-radius:13px}
+  .suggestion-title{font-size:12px}
+  .suggestion-desc{font-size:10px}
+  .composer-area{padding:10px 12px 12px}
+  .composer{border-radius:17px;padding:8px 9px 8px 13px}
+  .send-btn{width:39px;height:39px}
+  .top-badge{font-size:10px;padding:6px 8px}
+  .message{gap:9px}
+  .message-avatar{width:31px;height:31px;border-radius:10px}
+  .message-content{max-width:calc(100% - 40px)}
+  .bubble{font-size:13px}
+}
+
+@media(max-width:360px){
+  .suggestions{grid-template-columns:1fr}
+  .welcome h1{font-size:26px}
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<aside class="sidebar" id="sidebar">
+  <div class="brand">
+    <div class="logo">✦</div>
+    <div>
+      <div class="brand-name">GemC AI</div>
+      <div class="brand-sub">Ёвари зеҳни сунъии ту</div>
+    </div>
+  </div>
+
+  <button class="new-chat" id="newChat">
+    <span style="font-size:20px">＋</span>
+    <span>Суҳбати нав</span>
+  </button>
+
+  <div class="section-label">ТАЪРИХИ СУҲБАТҲО</div>
+  <div class="history" id="history"></div>
+
+  <div class="sidebar-bottom">
+    <div class="avatar">G</div>
+    <div>
+      <div class="user-info">GemC AI</div>
+      <div class="user-status">● Система фаъол аст</div>
+    </div>
+  </div>
+</aside>
+
+<div class="overlay" id="overlay"></div>
+
+<main class="main">
+  <header class="topbar">
+    <div class="top-left">
+      <button class="menu-btn" id="menuBtn" aria-label="Меню">☰</button>
+      <div>
+        <div class="top-title">GemC AI <span style="color:#a99aff">✦</span></div>
+        <div class="status">● Ёвари зеҳни сунъӣ</div>
+      </div>
+    </div>
+    <div class="top-badge">AI ASSISTANT</div>
+  </header>
+
+  <section class="chat" id="chat">
+    <div class="chat-inner" id="chatInner">
+      <div class="welcome" id="welcome">
+        <div class="logo-orb">✦</div>
+        <h1>Салом! Ман <span class="gradient-text">GemC AI</span> ҳастам.</h1>
+        <p>Ман омодаам ба саволҳоят ҷавоб диҳам, дар омӯзиш кӯмак кунам ва барои идеяҳоят роҳҳои нав пешниҳод намоям.</p>
+
+        <div class="suggestions">
+          <button class="suggestion" data-prompt="Ба ман HTML-ро аз сифр омӯзон.">
+            <div class="suggestion-icon">⌘</div>
+            <div class="suggestion-title">Омӯзиши барномасозӣ</div>
+            <div class="suggestion-desc">HTML, CSS, JavaScript ва Python</div>
+          </button>
+
+          <button class="suggestion" data-prompt="Як идеяи ҷолиб барои сохтани вебсайт пешниҳод кун.">
+            <div class="suggestion-icon">✧</div>
+            <div class="suggestion-title">Идеяҳои нав</div>
+            <div class="suggestion-desc">Лоиҳа ва вебсайтҳои ҷолиб</div>
+          </button>
+
+          <button class="suggestion" data-prompt="Ба ман дар омӯзиши забони англисӣ кӯмак кун.">
+            <div class="suggestion-icon">文</div>
+            <div class="suggestion-title">Забони англисӣ</div>
+            <div class="suggestion-desc">Омӯзиш бо қоида ва мисолҳо</div>
+          </button>
+
+          <button class="suggestion" data-prompt="Фаҳмон, ки зеҳни сунъӣ чӣ гуна кор мекунад.">
+            <div class="suggestion-icon">◈</div>
+            <div class="suggestion-title">Зеҳни сунъӣ</div>
+            <div class="suggestion-desc">Маълумот дар бораи технология</div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="composer-area">
+    <div class="composer-wrap">
+      <form class="composer" id="chatForm">
+        <textarea id="prompt" rows="1" placeholder="Паёматро навис..." autocomplete="off"></textarea>
+        <button class="send-btn" id="sendBtn" type="submit" aria-label="Фиристодан">↑</button>
+      </form>
+      <div class="hint">GemC AI метавонад хато кунад. Ҷавобҳои муҳимро санҷ.</div>
+    </div>
+  </div>
+</main>
+</div>
+
+<script>
+(() => {
+  const chat = document.getElementById("chat");
+  const chatInner = document.getElementById("chatInner");
+  const prompt = document.getElementById("prompt");
+  const form = document.getElementById("chatForm");
+  const sendBtn = document.getElementById("sendBtn");
+  const welcome = document.getElementById("welcome");
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("overlay");
+  const historyBox = document.getElementById("history");
+
+  let chats = [];
+  let currentChat = null;
+  let busy = false;
+
+  try {
+    chats = JSON.parse(localStorage.getItem("gemc_chats") || "[]");
+    if (!Array.isArray(chats)) chats = [];
+  } catch {
+    chats = [];
+  }
+
+  function saveChats() {
+    try {
+      localStorage.setItem("gemc_chats", JSON.stringify(chats));
+    } catch(e) {
+      console.warn("Таърихи суҳбат нигоҳ дошта нашуд:", e);
+    }
+  }
+
+  function makeChat() {
+    currentChat = {
+      id: Date.now(),
+      title: "Суҳбати нав",
+      messages: []
+    };
+    chats.unshift(currentChat);
+    saveChats();
+    renderHistory();
+    showWelcome();
+  }
+
+  function showWelcome() {
+    chatInner.innerHTML = "";
+    const fresh = welcome.cloneNode(true);
+    fresh.id = "welcome";
+    fresh.style.display = "";
+    chatInner.appendChild(fresh);
+    bindSuggestions(fresh);
+    chat.scrollTop = 0;
+  }
+
+  function renderHistory() {
+    historyBox.innerHTML = "";
+
+    chats.forEach(item => {
+      const row = document.createElement("div");
+      row.className = "history-item";
+      row.textContent = "◷  " + (item.title || "Суҳбати нав");
+      row.title = item.title || "Суҳбати нав";
+
+      row.addEventListener("click", () => {
+        currentChat = item;
+        renderMessages();
+        closeSidebar();
+      });
+
+      historyBox.appendChild(row);
+    });
+  }
+
+  function renderMessages() {
+    chatInner.innerHTML = "";
+
+    if (!currentChat || !currentChat.messages.length) {
+      showWelcome();
+      return;
+    }
+
+    currentChat.messages.forEach(msg => {
+      addMessage(msg.role, msg.content);
+    });
+
+    scrollBottom();
+  }
+
+  function scrollBottom() {
+    requestAnimationFrame(() => {
+      chat.scrollTop = chat.scrollHeight;
+    });
+  }
+
+  function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, c => ({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#39;"
+    })[c]);
+  }
+
+  function formatText(text) {
+    let safe = escapeHTML(text);
+
+    safe = safe.replace(/```([\s\S]*?)```/g, (_, code) =>
+      "<pre><code>" + code.trim() + "</code></pre>"
+    );
+
+    safe = safe.replace(/`([^`\n]+)`/g, "<code>$1</code>");
+    safe = safe.replace(/^### (.+)$/gm, "<h3>$1</h3>");
+    safe = safe.replace(/^## (.+)$/gm, "<h2>$1</h2>");
+    safe = safe.replace(/^# (.+)$/gm, "<h1>$1</h1>");
+    safe = safe.replace(/\*\*(.+?)\*\*/gs, "<strong>$1</strong>");
+    safe = safe.replace(/\*(.+?)\*/gs, "<em>$1</em>");
+
+    const lines = safe.split("\n");
+    const output = [];
+    let listType = "";
+
+    function closeList() {
+      if (listType) {
+        output.push(listType === "ul" ? "</ul>" : "</ol>");
+        listType = "";
+      }
+    }
+
+    for (const line of lines) {
+      if (/^\s*<pre>/.test(line) || /^\s*<\/pre>/.test(line)) {
+        closeList();
+        output.push(line);
+        continue;
+      }
+
+      const ul = line.match(/^\s*[-•]\s+(.+)/);
+      const ol = line.match(/^\s*\d+[.)]\s+(.+)/);
+
+      if (ul || ol) {
+        const type = ul ? "ul" : "ol";
+        if (listType !== type) {
+          closeList();
+          output.push(type === "ul" ? "<ul>" : "<ol>");
+          listType = type;
+        }
+        output.push("<li>" + (ul ? ul[1] : ol[1]) + "</li>");
+      } else {
+        closeList();
+        if (/^<(h[1-3]|pre|\/pre)/.test(line.trim())) {
+          output.push(line);
+        } else if (line.trim()) {
+          output.push("<p>" + line + "</p>");
+        }
+      }
+    }
+
+    closeList();
+    return output.join("");
+  }
+
+  function addMessage(role, text) {
+    const row = document.createElement("div");
+    row.className = "message " + (role === "user" ? "user" : "assistant");
+
+    const avatar = document.createElement("div");
+    avatar.className = "message-avatar";
+    avatar.textContent = role === "user" ? "Ту" : "✦";
+
+    const content = document.createElement("div");
+    content.className = "message-content";
+
+    const name = document.createElement("div");
+    name.className = "message-name";
+    name.textContent = role === "user" ? "Ту" : "GemC AI";
+
+    const bubble = document.createElement("div");
+    bubble.className = "bubble";
+    bubble.innerHTML = formatText(text);
+
+    content.appendChild(name);
+    content.appendChild(bubble);
+    row.appendChild(avatar);
+    row.appendChild(content);
+    chatInner.appendChild(row);
+
+    return row;
+  }
+
+  function bindSuggestions(root) {
+    root.querySelectorAll(".suggestion").forEach(btn => {
+      btn.addEventListener("click", () => {
+        prompt.value = btn.dataset.prompt || "";
+        autoResize();
+        /* prompt.focus(); */
+      });
+    });
+  }
+
+  bindSuggestions(document);
+
+  function autoResize() {
+    prompt.style.height = "auto";
+    prompt.style.height = Math.min(prompt.scrollHeight, 150) + "px";
+  }
+
+  prompt.addEventListener("input", autoResize);
+
+  prompt.addEventListener("keydown", e => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      form.requestSubmit();
+    }
+  });
+
+  async function sendMessage(text) {
+    if (busy || !text.trim()) return;
+
+    if (!currentChat) {
+      currentChat = {
+        id: Date.now(),
+        title: text.trim().slice(0, 36),
+        messages: []
+      };
+      chats.unshift(currentChat);
+    }
+
+    if (!currentChat.messages.length) {
+      currentChat.title = text.trim().slice(0, 36);
+    }
+
+    currentChat.messages.push({role:"user", content:text});
+    saveChats();
+    renderHistory();
+
+    const oldWelcome = document.getElementById("welcome");
+    if (oldWelcome) oldWelcome.remove();
+
+    addMessage("user", text);
+    const typingRow = document.createElement("div");
+    typingRow.className = "message";
+    typingRow.innerHTML =
+      '<div class="message-avatar">✦</div>' +
+      '<div class="message-content"><div class="message-name">GemC AI</div>' +
+      '<div class="typing"><span></span><span></span><span></span></div></div>';
+
+    chatInner.appendChild(typingRow);
+    scrollBottom();
+
+    busy = true;
+    sendBtn.disabled = true;
+
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({
+          message: text,
+          messages: currentChat.messages
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || data.message || "Хатои сервер: " + response.status);
+      }
+
+      const reply =
+        data.answer ??
+        data.reply ??
+        data.response ??
+        data.content ??
+        data.message ??
+        data.choices?.[0]?.message?.content;
+
+      if (typeof reply !== "string" || !reply.trim()) {
+        throw new Error("Сервер ҷавоби матнӣ нафиристод.");
+      }
+
+      typingRow.remove();
+      currentChat.messages.push({ role: "assistant", content: reply });
+      saveChats();
+      addMessage("assistant", reply);
+      renderHistory();
+
+    } catch (error) {
+      typingRow.remove();
+      addMessage(
+        "assistant",
+        "Бубахш, ҳангоми гирифтани ҷавоб хато шуд.\n\n**Сабаб:** " +
+          error.message +
+          "\n\nСанҷ, ки сервер фаъол аст ва API дуруст танзим шудааст."
+      );
+    } finally {
+      busy = false;
+      sendBtn.disabled = false;
+      /* prompt.focus(); */
+      scrollBottom();
+    }
+  }
+
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    const text = prompt.value.trim();
+    if (!text || busy) return;
+
+    prompt.value = "";
+    autoResize();
+    sendMessage(text);
+  });
+
+  document.getElementById("newChat").addEventListener("click", () => {
+    makeChat();
+    closeSidebar();
+    prompt.focus();
+  });
+
+  document.getElementById("menuBtn").addEventListener("click", () => {
+    sidebar.classList.toggle("open");
+    overlay.classList.toggle("show");
+  });
+
+  overlay.addEventListener("click", closeSidebar);
+
+  function closeSidebar() {
+    sidebar.classList.remove("open");
+    overlay.classList.remove("show");
+  }
+
+  renderHistory();
+  showWelcome();
+})();
+</script>
+
+<!-- GEMC AI IMAGE GENERATOR -->
+<style>
+#gemcImageButton {
+  position: fixed;
+  right: 14px;
+  bottom: 90px;
+  z-index: 9998;
+  padding: 12px 16px;
+  border: 1px solid #555;
+  border-radius: 24px;
+  background: #252538;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 18px #0005;
+}
+#gemcImagePanel {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 12px;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  max-width: 460px;
+  margin: auto;
+  padding: 18px;
+  border: 1px solid #45455b;
+  border-radius: 20px;
+  background: #171725;
+  color: white;
+  box-shadow: 0 10px 50px #0009;
+  font-family: Arial, sans-serif;
+}
+#gemcImagePanel h3 {
+  margin: 0 0 8px;
+}
+#gemcImagePrompt {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 90px;
+  resize: vertical;
+  padding: 12px;
+  border: 1px solid #45455b;
+  border-radius: 12px;
+  background: #242436;
+  color: white;
+  font-size: 15px;
+  outline: none;
+}
+.gemcImageActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.gemcImageActions button {
+  flex: 1;
+  padding: 12px 8px;
+  border: 0;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+}
+#gemcGenerateBtn {
+  background: #7865f5;
+  color: white;
+}
+#gemcCloseBtn {
+  background: #343446;
+  color: white;
+}
+#gemcImageStatus {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #c4c4d8;
+  overflow-wrap: anywhere;
+}
+#gemcImageResult {
+  display: none;
+  width: 100%;
+  max-height: 55vh;
+  margin-top: 12px;
+  border-radius: 12px;
+  object-fit: contain;
+  background: #242436;
+}
+#gemcImageDownload {
+  display: none;
+  margin-top: 10px;
+  color: #b8adff;
+}
+</style>
+
+<button id="gemcImageButton" type="button">
+  🖼️ Сохтани сурат
+</button>
+
+<div id="gemcImagePanel">
+  <h3>🖼️ GemC AI Image</h3>
+  <p>Тавсифи суратеро, ки мехоҳӣ сохта шавад, навис.</p>
+
+  <textarea
+    id="gemcImagePrompt"
+    placeholder="Масалан: A futuristic city at night, beautiful lights, realistic..."
+  ></textarea>
+
+  <div class="gemcImageActions">
+    <button id="gemcGenerateBtn" type="button">
+      Сохтани сурат
+    </button>
+    <button id="gemcCloseBtn" type="button">
+      Пӯшидан
+    </button>
+  </div>
+
+  <div id="gemcImageStatus" role="status"></div>
+
+  <img id="gemcImageResult" alt="Сурати сохтаи GemC AI">
+
+  <a
+    id="gemcImageDownload"
+    href="#"
+    target="_blank"
+    rel="noopener"
+  >Кушодани сурат</a>
+</div>
+
+<script>
+(() => {
+  const openBtn = document.getElementById("gemcImageButton");
+  const panel = document.getElementById("gemcImagePanel");
+  const closeBtn = document.getElementById("gemcCloseBtn");
+  const generateBtn = document.getElementById("gemcGenerateBtn");
+  const promptInput = document.getElementById("gemcImagePrompt");
+  const status = document.getElementById("gemcImageStatus");
+  const resultImage = document.getElementById("gemcImageResult");
+  const downloadLink = document.getElementById("gemcImageDownload");
+
+  openBtn.addEventListener("click", () => {
+    panel.style.display = "block";
+  });
+
+  closeBtn.addEventListener("click", () => {
+    panel.style.display = "none";
+  });
+
+  generateBtn.addEventListener("click", async () => {
+    const prompt = promptInput.value.trim();
+
+    if (!prompt) {
+      status.textContent = "Аввал тавсифи суратро навис.";
+      promptInput.focus();
+      return;
+    }
+
+    generateBtn.disabled = true;
+    generateBtn.textContent = "Дар ҳоли сохтан...";
+    status.textContent =
+      "Лутфан интизор шав. Сохтани сурат метавонад каме вақт гирад.";
+
+    resultImage.style.display = "none";
+    downloadLink.style.display = "none";
+
+    try {
+      const response = await fetch("/api/image", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ prompt })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.image) {
+        throw new Error(
+          data.error || "Сурат сохта нашуд. Боз кӯшиш кун."
+        );
+      }
+
+      resultImage.onload = () => {
+        status.textContent = "Сурат тайёр шуд!";
+        resultImage.style.display = "block";
+        downloadLink.href = data.image;
+        downloadLink.style.display = "inline-block";
+      };
+
+      resultImage.onerror = () => {
+        status.textContent =
+          "Сурат сохта шуд, аммо кушодани он муяссар нашуд.";
+      };
+
+      resultImage.src = data.image;
+
+    } catch (error) {
+      status.textContent = "Хато: " + error.message;
+    } finally {
+      generateBtn.disabled = false;
+      generateBtn.textContent = "Сохтани сурат";
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
